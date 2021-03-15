@@ -1,4 +1,4 @@
-# info
+# Info Bash Script for Linux
 
 This is a simple Info Bash Script for Linux.
 
@@ -7,3 +7,4 @@ This is a simple Info Bash Script for Linux.
 
 # Short URL:
 `https://rmly.dev/info`
+You can download the script using the short url.
