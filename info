@@ -1,0 +1,94 @@
+#################################################################
+# Script made by Rmly (2021) @ https://rmly.dev                 #
+# [!] I do not own any commands that are used in the variables. #
+# Feel free to use and modify. [!]                              #
+#################################################################
+
+#!/bin/bash
+
+clear
+
+###
+# Script Variables
+###
+os=$(cat /etc/os* | grep PRETTY_NAME | cut -f2 -d"\"")
+uptimecmd=$(</proc/uptime)
+uptime=${uptimecmd%%.*} bold=$(tput bold)
+days=$(( uptime/60/60/24 )) 
+hours=$(( uptime/60/60%24 ))
+minutes=$(( uptime/60%60 ))
+seconds=$(( uptime%60 ))
+uname=$(uname -a)
+user=$(whoami)
+kernel=$(uname -r | cut -f1 -d"-")
+virtualization=$(hostnamectl status | grep "Virtualization" | cut -d: -f2 | xargs)
+cpumodel=$(cat /proc/cpuinfo | grep 'model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | sed -n 1p)
+cpucores=$((( $(lscpu | awk '/^Socket\(s\)/{ print $2 }') * $(lscpu | awk '/^Core\(s\) per socket/{ print $4 }') )))
+cputhreads=$(grep -c processor /proc/cpuinfo)
+cpumhz=$(grep 'cpu MHz' /proc/cpuinfo | head -1 | awk -F: '{print $2/1024}')
+cpustepping=$(grep -m 1 "stepping" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
+cpuvendorid=$(grep -m 1 "vendor_id" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
+cpubogomips=$(grep -m 1 "bogomips" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
+cpuarchitecture=$(lscpu | grep -m 1 "Architecture" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
+cpusockets=$(lscpu | grep -m 1 "Socket(s)" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
+totalmemorymb=$(free -m | grep -oP '\d+' | head -n 1)
+usedmemory=$(free | grep Mem | awk '{print $3/$2 * 100.0}' | cut -f1 -d".")
+freememory=$(free | grep Mem | awk '{print $4/$2 * 100.0}' | cut -f1 -d".")
+usedmemorymb=$(awk '/^Mem/ {print $3}' <(free -m))
+freememorymb=$(awk '/MemFree/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
+buffers=$(awk '/Buffers/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
+cached=$(awk '/Cached/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d"." | cut -f1 -d"0" | xargs)
+swaptotal=$(awk '/SwapTotal/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
+swapfree=$(awk '/SwapFree/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
+swapcached=$(awk '/SwapCached/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
+
+###
+# Colors
+###
+reset="\e[39m"
+white="\e[97m"
+cyan="\e[36m"
+lcyan="\e[96m"
+grey="\e[37m"
+dgrey="\e[90m"
+lblue="\e[94m"
+
+###
+# Other Stuff
+###
+align1="  "
+align2="    "
+
+###
+# Script Core
+###
+
+echo -e "*** ${lblue}Machine Info:"
+echo -e "${align1}${white}> ${lblue}General:"
+echo -e "${align2}${cyan}* ${white}Uname${dgrey}: ${lcyan}$uname"
+echo -e "${align2}${cyan}* ${white}Operating System${dgrey}: ${lcyan}$os"
+echo -e "${align2}${cyan}* ${white}Uptime${dgrey}: ${lcyan}${days} ${white}days ${lcyan}${hours}${white} hours ${lcyan}${minutes}${white} minutes ${lcyan}${seconds}${white} seconds"
+echo -e "${align2}${cyan}* ${white}User${dgrey}: ${lcyan}$user"
+echo -e "${align2}${cyan}* ${white}Kernel${dgrey}: ${lcyan}$kernel"
+echo -e "${align2}${cyan}* ${white}Virtualization${dgrey}: ${lcyan}$virtualization"
+echo -e "${align1}${white}> ${lblue}CPU:"
+echo -e "${align2}${cyan}* ${white}Model${dgrey}: ${lcyan}$cpumodel"
+echo -e "${align2}${cyan}* ${white}Vendor ID${dgrey}: ${lcyan}$cpuvendorid"
+echo -e "${align2}${cyan}* ${white}Cores${dgrey}: ${lcyan}$cpucores"
+echo -e "${align2}${cyan}* ${white}Threads${dgrey}: ${lcyan}$cputhreads"
+echo -e "${align2}${cyan}* ${white}Stepping${dgrey}: ${lcyan}$cpustepping"
+echo -e "${align2}${cyan}* ${white}Sockets${dgrey}: ${lcyan}$cpusockets"
+echo -e "${align2}${cyan}* ${white}Architecture${dgrey}: ${lcyan}$cpuarchitecture"
+echo -e "${align2}${cyan}* ${white}MHz${dgrey}: ${lcyan}$cpumhz"
+echo -e "${align2}${cyan}* ${white}Bogomips${dgrey}: ${lcyan}$cpubogomips"
+echo -e "${align1}${white}> ${lblue}RAM:"
+echo -e "${align2}${cyan}* ${white}Total${dgrey}: ${lcyan}$totalmemorymb MB"
+echo -e "${align2}${cyan}* ${white}Used${dgrey}: ${lcyan}${usedmemory}% ${dgrey}(${lcyan}${usedmemorymb} MB${dgrey})"
+echo -e "${align2}${cyan}* ${white}Free${dgrey}: ${lcyan}${freememory}% ${dgrey}(${lcyan}${freememorymb} MB${dgrey})"
+echo -e "${align2}${cyan}* ${white}Buffers${dgrey}: ${lcyan}${buffers} MB"
+echo -e "${align2}${cyan}* ${white}Cached${dgrey}: ${lcyan}${cached} MB"
+echo -e "${align1}${white}> ${lblue}Swap:"
+echo -e "${align2}${cyan}* ${white}Total${dgrey}: ${lcyan}${swaptotal} MB"
+echo -e "${align2}${cyan}* ${white}Free${dgrey}: ${lcyan}${swapfree} MB"
+echo -e "${align2}${cyan}* ${white}Cached${dgrey}: ${lcyan}${swapcached} MB"
+echo -e "${reset}"
