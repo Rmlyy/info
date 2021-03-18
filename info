@@ -1,10 +1,10 @@
-#!/bin/bash
-
 #################################################################
 # Script made by Rmly (2021) @ https://rmly.dev                 #
 # [!] I do not own any commands that are used in the variables. #
 # Feel free to use and modify. [!]                              #
 #################################################################
+
+#!/bin/bash
 
 clear
 
@@ -21,7 +21,9 @@ seconds=$(( uptime%60 ))
 uname=$(uname -a)
 user=$(whoami)
 kernel=$(uname -r | cut -f1 -d"-")
-virtualization=$(hostnamectl status | grep "Virtualization" | cut -d: -f2 | xargs)
+virtualization=$(hostnamectl status 2>/dev/null | grep "Virtualization" | cut -d: -f2 | xargs)
+hostname=$(hostname)
+fqdn=$(hostname --fqdn)
 cpumodel=$(cat /proc/cpuinfo | grep 'model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | sed -n 1p)
 cpucores=$((( $(lscpu | awk '/^Socket\(s\)/{ print $2 }') * $(lscpu | awk '/^Core\(s\) per socket/{ print $4 }') )))
 cputhreads=$(grep -c processor /proc/cpuinfo)
@@ -31,6 +33,7 @@ cpuvendorid=$(grep -m 1 "vendor_id" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ */
 cpubogomips=$(grep -m 1 "bogomips" /proc/cpuinfo | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
 cpuarchitecture=$(lscpu | grep -m 1 "Architecture" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
 cpusockets=$(lscpu | grep -m 1 "Socket(s)" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
+cpuvirtualization=$(lscpu | grep -m 1 "Virtualization" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
 totalmemorymb=$(free -m | grep -oP '\d+' | head -n 1)
 usedmemory=$(free | grep Mem | awk '{print $3/$2 * 100.0}' | cut -f1 -d".")
 freememory=$(free | grep Mem | awk '{print $4/$2 * 100.0}' | cut -f1 -d".")
@@ -68,6 +71,8 @@ echo -e "${align1}${white}> ${lblue}General:"
 echo -e "${align2}${cyan}* ${white}Uname${dgrey}: ${lcyan}$uname"
 echo -e "${align2}${cyan}* ${white}Operating System${dgrey}: ${lcyan}$os"
 echo -e "${align2}${cyan}* ${white}Uptime${dgrey}: ${lcyan}${days} ${white}days ${lcyan}${hours}${white} hours ${lcyan}${minutes}${white} minutes ${lcyan}${seconds}${white} seconds"
+echo -e "${align2}${cyan}* ${white}Hostname${dgrey}: ${lcyan}$hostname"
+echo -e "${align2}${cyan}* ${white}Hostname (FQDN)${dgrey}: ${lcyan}$fqdn"
 echo -e "${align2}${cyan}* ${white}User${dgrey}: ${lcyan}$user"
 echo -e "${align2}${cyan}* ${white}Kernel${dgrey}: ${lcyan}$kernel"
 echo -e "${align2}${cyan}* ${white}Virtualization${dgrey}: ${lcyan}$virtualization"
@@ -79,16 +84,16 @@ echo -e "${align2}${cyan}* ${white}Threads${dgrey}: ${lcyan}$cputhreads"
 echo -e "${align2}${cyan}* ${white}Stepping${dgrey}: ${lcyan}$cpustepping"
 echo -e "${align2}${cyan}* ${white}Sockets${dgrey}: ${lcyan}$cpusockets"
 echo -e "${align2}${cyan}* ${white}Architecture${dgrey}: ${lcyan}$cpuarchitecture"
+echo -e "${align2}${cyan}* ${white}Virtualization${dgrey}: ${lcyan}$cpuvirtualization"
 echo -e "${align2}${cyan}* ${white}MHz${dgrey}: ${lcyan}$cpumhz"
 echo -e "${align2}${cyan}* ${white}Bogomips${dgrey}: ${lcyan}$cpubogomips"
 echo -e "${align1}${white}> ${lblue}RAM:"
 echo -e "${align2}${cyan}* ${white}Total${dgrey}: ${lcyan}$totalmemorymb MB"
-echo -e "${align2}${cyan}* ${white}Used${dgrey}: ${lcyan}${usedmemory}% ${dgrey}(${lcyan}${usedmemorymb} MB${dgrey})"
-echo -e "${align2}${cyan}* ${white}Free${dgrey}: ${lcyan}${freememory}% ${dgrey}(${lcyan}${freememorymb} MB${dgrey})"
+echo -e "${align2}${cyan}* ${white}Used${dgrey}: ${lcyan}${usedmemorymb} MB ${dgrey}(${lcyan}${usedmemory}%${dgrey})"
+echo -e "${align2}${cyan}* ${white}Free${dgrey}: ${lcyan}${freememorymb} MB ${dgrey}(${lcyan}${freememory}%${dgrey})"
 echo -e "${align2}${cyan}* ${white}Buffers${dgrey}: ${lcyan}${buffers} MB"
 echo -e "${align2}${cyan}* ${white}Cached${dgrey}: ${lcyan}${cached} MB"
 echo -e "${align1}${white}> ${lblue}Swap:"
 echo -e "${align2}${cyan}* ${white}Total${dgrey}: ${lcyan}${swaptotal} MB"
 echo -e "${align2}${cyan}* ${white}Free${dgrey}: ${lcyan}${swapfree} MB"
-echo -e "${align2}${cyan}* ${white}Cached${dgrey}: ${lcyan}${swapcached} MB"
-echo -e "${reset}"
+echo -e "${align2}${cyan}* ${white}Cached${dgrey}: ${lcyan}${swapcached} MB${reset}"
