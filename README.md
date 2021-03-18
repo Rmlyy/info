@@ -4,7 +4,7 @@
 `bash info`
 
 # Short URL:
-`https://rmly.dev/info`
+`https://files.rmly.dev/info`
 You can download the script using the short url.
 
 # Note:
