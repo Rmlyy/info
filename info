@@ -6,6 +6,8 @@
 
 #!/bin/bash
 
+version="1.3"
+
 clear
 
 ###
@@ -35,8 +37,8 @@ cpuarchitecture=$(lscpu | grep -m 1 "Architecture" | cut -d: -f2 | sed -e 's/^ *
 cpusockets=$(lscpu | grep -m 1 "Socket(s)" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
 cpuvirtualization=$(lscpu | grep -m 1 "Virtualization" | cut -d: -f2 | sed -e 's/^ *//' | sed -e 's/$//')
 totalmemorymb=$(free -m | grep -oP '\d+' | head -n 1)
-usedmemory=$(free | grep Mem | awk '{print $3/$2 * 100.0}' | cut -f1 -d".")
-freememory=$(free | grep Mem | awk '{print $4/$2 * 100.0}' | cut -f1 -d".")
+usedmemory=$(free | grep Mem | awk '{print $3/$2 * 100.0}' | cut -f1 -d"." | cut -f1 -d",")
+freememory=$(free | grep Mem | awk '{print $4/$2 * 100.0}' | cut -f1 -d"." | cut -f1 -d",")
 usedmemorymb=$(awk '/^Mem/ {print $3}' <(free -m))
 freememorymb=$(awk '/MemFree/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
 buffers=$(awk '/Buffers/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
