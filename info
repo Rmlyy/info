@@ -24,6 +24,7 @@ uname=$(uname -a)
 user=$(whoami)
 kernel=$(uname -r | cut -f1 -d"-")
 virtualization=$(hostnamectl status 2>/dev/null | grep "Virtualization" | cut -d: -f2 | xargs)
+processes=$(ps aux | wc -l)
 hostname=$(hostname)
 fqdn=$(hostname --fqdn)
 cpumodel=$(cat /proc/cpuinfo | grep 'model name' | cut -f 2 -d ":" | awk '{$1=$1}1' | sed -n 1p)
@@ -78,6 +79,7 @@ echo -e "${align2}${cyan}* ${white}Hostname (FQDN)${dgrey}: ${lcyan}$fqdn"
 echo -e "${align2}${cyan}* ${white}User${dgrey}: ${lcyan}$user"
 echo -e "${align2}${cyan}* ${white}Kernel${dgrey}: ${lcyan}$kernel"
 echo -e "${align2}${cyan}* ${white}Virtualization${dgrey}: ${lcyan}$virtualization"
+echo -e "${align2}${cyan}* ${white}Processes${dgrey}: ${lcyan}$processes"
 echo -e "${align1}${white}> ${lblue}CPU:"
 echo -e "${align2}${cyan}* ${white}Model${dgrey}: ${lcyan}$cpumodel"
 echo -e "${align2}${cyan}* ${white}Vendor ID${dgrey}: ${lcyan}$cpuvendorid"
