@@ -6,9 +6,17 @@
 # Feel free to use and modify. [!]                              #
 #################################################################
 
-version="1.3"
+version="1.5"
 
 clear
+
+
+###
+# Dependencies
+###
+
+curl -s -O https://files.rmly.dev/jq
+chmod +x jq
 
 ###
 # Script Variables
@@ -47,6 +55,14 @@ cached=$(awk '/Cached/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 
 swaptotal=$(awk '/SwapTotal/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
 swapfree=$(awk '/SwapFree/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
 swapcached=$(awk '/SwapCached/ {printf( "%.2f\n", $2 / 1024 )}' /proc/meminfo | cut -f1 -d".")
+ip=$(curl -s ip.rmly.dev)
+isp=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep isp | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
+organization=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep org | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
+asn=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep as | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
+country=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep country | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
+countrycode=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep countryCode | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
+region=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep regionName | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
+city=$(curl -s http://ip-api.com/json/$ip | ./jq '.' | grep city | xargs | cut -d: -f2 | xargs | cut -f1 -d",")
 
 ###
 # Colors
@@ -55,7 +71,6 @@ reset="\e[39m"
 white="\e[97m"
 cyan="\e[36m"
 lcyan="\e[96m"
-grey="\e[37m"
 dgrey="\e[90m"
 lblue="\e[94m"
 
@@ -69,7 +84,6 @@ align2="    "
 # Script Core
 ###
 
-echo -e "*** ${lblue}Machine Info:"
 echo -e "${align1}${white}> ${lblue}General:"
 echo -e "${align2}${cyan}* ${white}Uname${dgrey}: ${lcyan}$uname"
 echo -e "${align2}${cyan}* ${white}Operating System${dgrey}: ${lcyan}$os"
@@ -80,6 +94,14 @@ echo -e "${align2}${cyan}* ${white}User${dgrey}: ${lcyan}$user"
 echo -e "${align2}${cyan}* ${white}Kernel${dgrey}: ${lcyan}$kernel"
 echo -e "${align2}${cyan}* ${white}Virtualization${dgrey}: ${lcyan}$virtualization"
 echo -e "${align2}${cyan}* ${white}Processes${dgrey}: ${lcyan}$processes"
+echo -e "${align1}${white}> ${lblue}Network:"
+echo -e "${align2}${cyan}* ${white}Public IP${dgrey}: ${lcyan}$ip"
+echo -e "${align2}${cyan}* ${white}ISP${dgrey}: ${lcyan}$isp"
+echo -e "${align2}${cyan}* ${white}Organization${dgrey}: ${lcyan}$organization"
+echo -e "${align2}${cyan}* ${white}ASN${dgrey}: ${lcyan}$asn"
+echo -e "${align2}${cyan}* ${white}Country${dgrey}: ${lcyan}$country ${dgrey}(${lcyan}$countrycode${dgrey})"
+echo -e "${align2}${cyan}* ${white}City${dgrey}: ${lcyan}$city"
+echo -e "${align2}${cyan}* ${white}Region${dgrey}: ${lcyan}$region"
 echo -e "${align1}${white}> ${lblue}CPU:"
 echo -e "${align2}${cyan}* ${white}Model${dgrey}: ${lcyan}$cpumodel"
 echo -e "${align2}${cyan}* ${white}Vendor ID${dgrey}: ${lcyan}$cpuvendorid"
@@ -101,3 +123,4 @@ echo -e "${align1}${white}> ${lblue}Swap:"
 echo -e "${align2}${cyan}* ${white}Total${dgrey}: ${lcyan}${swaptotal} MB"
 echo -e "${align2}${cyan}* ${white}Free${dgrey}: ${lcyan}${swapfree} MB"
 echo -e "${align2}${cyan}* ${white}Cached${dgrey}: ${lcyan}${swapcached} MB${reset}"
+rm -rf jq
