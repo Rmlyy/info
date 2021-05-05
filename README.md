@@ -4,7 +4,7 @@
 `bash info`
 
 # Short URL:
-`https://files.rmly.dev/info`
+`https://aur.pw/f/info`
 You can download the script using the short url.
 
 # Note:
