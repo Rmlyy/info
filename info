@@ -15,7 +15,7 @@ clear
 # Dependencies
 ###
 
-curl -s -O https://files.rmly.dev/jq
+curl -s -O https://aur.pw/f/jq
 chmod +x jq
 
 ###
