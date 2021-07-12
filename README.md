@@ -3,9 +3,9 @@
 # Usage:
 `bash info`
 
-# Short URL:
-`https://aur.pw/f/info`
-You can download the script using the short url.
+# Download:
+`https://dl.rmly.dev/info`
+You can download the script using this URL.
 
 # Note:
 
